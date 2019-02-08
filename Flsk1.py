@@ -19,8 +19,7 @@ class Dept(db.Model):
     dname = db.Column(db.String)
     loc = db.Column(db.String)
 
-    def __init__(self, deptno, dname, loc):
-        self.deptno = deptno
+    def __init__(self, dname, loc):
         self.dname = dname
         self.loc = loc
 
@@ -40,8 +39,7 @@ class Emp(db.Model):
     comm = db.Column(db.Integer)
     deptno = db.Column(db.ForeignKey("dept.deptno"))
 
-    def __init__(self, empno, ename, job, mgr, hiredate, sal, comm, deptno):
-        self.empno = empno
+    def __init__(self, ename, job, mgr, hiredate, sal, comm, deptno):
         self.ename = ename
         self.job = job
         self.mgr = mgr
@@ -61,9 +59,8 @@ class Salgrade(db.Model):
     losal = db.Column(db.Integer)
     hisal = db.Column(db.Integer)
 
-    def __init__(self, losal, hisal, grade):
-        self.grade = grade
-        self.name = losal
+    def __init__(self, losal, hisal):
+        self.losal = losal
         self.hisal = hisal
 
 
@@ -98,13 +95,12 @@ def get_deptno(deptno):
 
 @app.route('/dept', methods=['POST'])
 def add_dept():
-    deptno = request.json['deptno']
     dname = request.json['dname']
     loc = request.json['loc']
-    new_dept = Dept(deptno, dname, loc)
+    new_dept = Dept(dname, loc)
     db.session.add(new_dept)
     db.session.commit()
-    return jsonify({'msg': 'Done.'})
+    return dept_schema.jsonify(new_dept)
 
 @app.route('/dept/<deptno>', methods=['PUT'])
 def upd_dept(deptno):
@@ -116,7 +112,7 @@ def upd_dept(deptno):
     dept.loc = loc
 
     db.session.commit()
-    return jsonify({'msg': 'Done.'})
+    return dept_schema.jsonify(dept)
 
 @app.route('/dept/<deptno>', methods=['DELETE'])
 def del_dept(deptno):
@@ -141,7 +137,6 @@ def get_emp(empno):
 
 @app.route('/emp', methods=['POST'])
 def add_emp():
-    empno = request.json['empno']
     ename = request.json['ename']
     job = request.json['job']
     mgr = request.json['mgr']
@@ -149,10 +144,10 @@ def add_emp():
     sal = request.json['sal']
     comm = request.json['comm']
     deptno = request.json['deptno']
-    new_emp = Emp(empno, ename, job, mgr, hiredate, sal, comm, deptno)
+    new_emp = Emp(ename, job, mgr, hiredate, sal, comm, deptno)
     db.session.add(new_emp)
     db.session.commit()
-    return jsonify({'msg': 'Done.'})
+    return emp_schema.jsonify(new_emp)
 
 @app.route('/emp/<empno>', methods=['PUT'])
 def upd_emp(empno):
@@ -174,14 +169,14 @@ def upd_emp(empno):
     emp.deptno =deptno
 
     db.session.commit()
-    return jsonify({'msg': 'Done.'})
+    return emp_schema.jsonify(emp)
 
 @app.route('/emp/<empno>', methods=['DELETE'])
 def del_emp(empno):
-    emp = Dept.query.get(empno)
+    emp = Emp.query.get(empno)
     db.session.delete(emp)
     db.session.commit()
-    return jsonify({'msg': 'Done.'})
+    return emp_schema.jsonify(emp)
 
 
 
@@ -199,13 +194,12 @@ def get_grade(grade):
 
 @app.route('/grade', methods=['POST'])
 def add_grade():
-    grade = request.json['grade']
-    name = request.json['losal']
+    losal = request.json['losal']
     hisal = request.json['hisal']
-    new_grade = Dept(grade, name, hisal)
+    new_grade = Salgrade(losal, hisal)
     db.session.add(new_grade)
     db.session.commit()
-    return jsonify({'msg': 'Done.'})
+    return salgrade_schema.jsonify(new_grade)
 
 @app.route('/dept/<grade>', methods=['PUT'])
 def upd_grade(grade_id):
@@ -217,14 +211,14 @@ def upd_grade(grade_id):
     grade.hisal = hisal
 
     db.session.commit()
-    return jsonify({'msg': 'Done.'})
+    return salgrade_schema.jsonify(grade)
 
-@app.route('/dept/<grade>', methods=['DELETE'])
+@app.route('/grade/<grade>', methods=['DELETE'])
 def del_grade(grade):
-    emp = Dept.query.get(grade)
-    db.session.delete(emp)
+    sgrade = Salgrade.query.get(grade)
+    db.session.delete(sgrade)
     db.session.commit()
-    return jsonify({'msg': 'Done.'})
+    return salgrade_schema.jsonify(sgrade)
 
 
 
