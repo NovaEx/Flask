@@ -1,0 +1,63 @@
+---
+
+test_name: EMP
+stages:
+  - name: Check employee creation
+    request:
+      url: http://127.0.0.1:5000/emp
+      json:
+        {
+          "comm": null,
+          "deptno": 10,
+          "ename": "BOB THE TESTER",
+          "hiredate": 20180101,
+          "job": "TESTER",
+          "mgr": 7839,
+          "sal": 1000
+        }
+      method: POST
+      headers:
+        content-type: application/json
+    response:
+      status_code: 200
+      save:
+        body:
+          employee: empno
+
+
+  - name: Make sure we have the right employee
+    request:
+      url: http://localhost:5000/emp/{employee}
+      method: GET
+    response:
+      status_code: 200
+      body:
+        {
+          "comm": null,
+          "deptno": 10,
+          "empno": !int "{employee}",
+          "ename": "BOB THE TESTER",
+          "hiredate": 20180101,
+          "job": "TESTER",
+          "mgr": 7839,
+          "sal": 1000
+        }
+
+
+  - name: Delete emp
+    request:
+      url: http://localhost:5000/emp/{employee}
+      method: DELETE
+    response:
+      status_code: 200
+      body:
+        "empno": !int "{employee}"
+
+
+
+  - name: Checking emp_all
+    request:
+      url: http://localhost:5000/emp
+      method: GET
+    response:
+      status_code: 200

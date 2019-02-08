@@ -1,0 +1,17 @@
+---
+
+test_name: DEPT
+stages:
+  - name: Check dept creation
+    request:
+      url: http://127.0.0.1:5000/dept
+      json:
+        {
+          "dname": "TEST_DEPT",
+          "loc": "TEST_CITY"
+        }
+      method: POST
+      headers:
+        content-type: application/json
+    response:
+      status_code: 200

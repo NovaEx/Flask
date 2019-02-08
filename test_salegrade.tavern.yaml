@@ -1,0 +1,51 @@
+---
+
+test_name: SALGRADE
+stages:
+  - name: Check salgrade creation
+    request:
+      url: http://127.0.0.1:5000/grade
+      json:
+        {
+          "hisal": 15000,
+          "losal": 10000
+        }
+      method: POST
+      headers:
+        content-type: application/json
+    response:
+      status_code: 200
+      save:
+        body:
+          sgrade: grade
+
+
+  - name: Make sure we have the right salgrade
+    request:
+      url: http://localhost:5000/grade/{sgrade}
+      method: GET
+    response:
+      status_code: 200
+      body:
+        {
+          "grade": !int "{sgrade}",
+          "hisal": 15000,
+          "losal": 10000
+        }
+
+
+  - name: Delete salgrade
+    request:
+      url: http://localhost:5000/grade/{sgrade}
+      method: DELETE
+    response:
+      status_code: 200
+      body:
+        "grade": !int "{sgrade}"
+
+  - name: Checking salgrade_all
+    request:
+      url: http://localhost:5000/grade
+      method: GET
+    response:
+      status_code: 200
