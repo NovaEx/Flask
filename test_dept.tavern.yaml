@@ -15,3 +15,35 @@ stages:
         content-type: application/json
     response:
       status_code: 200
+      save:
+        body:
+          department: deptno
+  - name: Make sure we have the right department
+    request:
+      url: http://localhost:5000/dept/{department}
+      method: GET
+    response:
+      status_code: 200
+      body:
+        {
+          "deptno": !int "{department}",
+          "dname": "TEST_DEPT",
+          "loc": "TEST_CITY"
+        }
+
+
+  - name: Delete dept
+    request:
+      url: http://localhost:5000/dept/{department}
+      method: DELETE
+    response:
+      status_code: 200
+      body:
+        "deptno": !int "{department}"
+
+  - name: Checking dept_all
+    request:
+      url: http://localhost:5000/dept
+      method: GET
+    response:
+      status_code: 200

@@ -119,7 +119,7 @@ def del_dept(deptno):
     dept = Dept.query.get(deptno)
     db.session.delete(dept)
     db.session.commit()
-    return jsonify({'msg': 'Done.'})
+    return dept_schema.jsonify(dept)
 
 
 
